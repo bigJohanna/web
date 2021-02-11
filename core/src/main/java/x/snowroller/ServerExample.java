@@ -73,7 +73,38 @@ public class ServerExample {
                 output.println("");
                 //output.print(page);
                 output.flush();
-            } else {
+            }
+            else if (url.equals("/stylesheet.css")) {
+                var output = new PrintWriter(socket.getOutputStream());
+
+                File file = new File("web" + File.separator + url);
+                byte[] page = FileReader.readFromFile(file);
+
+                String contentType = Files.probeContentType(file.toPath());
+
+                output.println("HTTP/1.1 200 OK");
+                output.println("Content-Length:" + page.length);
+                output.println("Content-Type:" + contentType);  //application/json
+                output.println("");
+                //output.print(page);
+                output.flush();
+            }
+            else if (url.equals("/javascriptfile.js")) {
+                var output = new PrintWriter(socket.getOutputStream());
+
+                File file = new File("web" + File.separator + url);
+                byte[] page = FileReader.readFromFile(file);
+
+                String contentType = Files.probeContentType(file.toPath());
+
+                output.println("HTTP/1.1 200 OK");
+                output.println("Content-Length:" + page.length);
+                output.println("Content-Type:" + contentType);  //application/json
+                output.println("");
+                //output.print(page);
+                output.flush();
+            }
+            else {
                 var output = new PrintWriter(socket.getOutputStream());
                 output.println("HTTP/1.1 404");
                 output.println("Content-Length: 0");
@@ -96,10 +127,16 @@ public class ServerExample {
         String requestedUrl = "";
         while (true) {
             String headerLine = input.readLine();
-            if( headerLine.startsWith("GET"))
-            {
+            if( headerLine.startsWith("GET")){
                 requestedUrl = headerLine.split(" ")[1];
             }
+            else if(headerLine.startsWith("HEAD")){
+                requestedUrl = headerLine.split(" ")[1];
+            }
+            else if(headerLine.startsWith("POST")){
+                requestedUrl = headerLine.split(" ")[1];
+            }
+
             System.out.println(headerLine);
             if (headerLine.isEmpty())
                 break;

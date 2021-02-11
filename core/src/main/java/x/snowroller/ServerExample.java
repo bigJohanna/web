@@ -48,6 +48,10 @@ public class ServerExample {
             } else if (url.equals("/index.html")) {
                 var output = new PrintWriter(socket.getOutputStream());
 
+                DAO dao = new DAO();
+
+                List<User> productList = dao.getALL();
+
                 File file = new File("web" + File.separator + url);
                 byte[] page = FileReader.readFromFile(file);
 
@@ -59,6 +63,10 @@ public class ServerExample {
                 output.println("");
                 //output.print(page);
                 output.flush();
+                var dataOut = new BufferedOutputStream(socket.getOutputStream());
+                dataOut.write(page);
+                dataOut.flush();
+                socket.close();
             } else if (url.equals("/cat.png")) {
                 var output = new PrintWriter(socket.getOutputStream());
 
@@ -73,6 +81,10 @@ public class ServerExample {
                 output.println("");
                 //output.print(page);
                 output.flush();
+                var dataOut = new BufferedOutputStream(socket.getOutputStream());
+                dataOut.write(page);
+                dataOut.flush();
+                socket.close();
             }
             else if (url.equals("/stylesheet.css")) {
                 var output = new PrintWriter(socket.getOutputStream());
@@ -88,6 +100,10 @@ public class ServerExample {
                 output.println("");
                 //output.print(page);
                 output.flush();
+                var dataOut = new BufferedOutputStream(socket.getOutputStream());
+                dataOut.write(page);
+                dataOut.flush();
+                socket.close();
             }
             else if (url.equals("/javascriptfile.js")) {
                 var output = new PrintWriter(socket.getOutputStream());
@@ -103,12 +119,17 @@ public class ServerExample {
                 output.println("");
                 //output.print(page);
                 output.flush();
+                var dataOut = new BufferedOutputStream(socket.getOutputStream());
+                dataOut.write(page);
+                dataOut.flush();
+                socket.close();
             }
             else {
                 var output = new PrintWriter(socket.getOutputStream());
                 output.println("HTTP/1.1 404");
                 output.println("Content-Length: 0");
                 output.println("");
+                output.flush();
             }
             var dataOut = new BufferedOutputStream(socket.getOutputStream());
 //            dataOut.write(page);

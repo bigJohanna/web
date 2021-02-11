@@ -41,16 +41,16 @@ public class ServerExample {
 
             String url = readHeaders(input);
 
-            if (url.equals("/products")) {
+            if (url.equals("/user")) {
 //                handleProductsURL();
             } else if (url.equals("/todos")) {
 //                handleTodosURL();
             } else if (url.equals("/index.html")) {
                 var output = new PrintWriter(socket.getOutputStream());
 
-                DAO dao = new DAO();
-
-                List<User> productList = dao.getALL();
+//                DAO dao = new DAO();
+//
+//                List<User> productList = dao.getALL();
 
                 File file = new File("web" + File.separator + url);
                 byte[] page = FileReader.readFromFile(file);
@@ -126,9 +126,9 @@ public class ServerExample {
             }
             else {
                 var output = new PrintWriter(socket.getOutputStream());
+
                 output.println("HTTP/1.1 404");
                 output.println("Content-Length: 0");
-                output.println("");
                 output.flush();
             }
             var dataOut = new BufferedOutputStream(socket.getOutputStream());
@@ -157,6 +157,7 @@ public class ServerExample {
             else if(headerLine.startsWith("POST")){
                 requestedUrl = headerLine.split(" ")[1];
             }
+            //kod som gör man kan sätta in sökparametrar. typ user?=börje osv.
 
             System.out.println(headerLine);
             if (headerLine.isEmpty())

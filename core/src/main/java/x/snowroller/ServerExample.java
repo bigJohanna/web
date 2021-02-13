@@ -39,57 +39,19 @@ public class ServerExample {
         try {
             BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            String url = readHeaders(input);
+            String url = input.readLine();
+            String requestedUrl = url.split(" ")[1];
+            String requestType = url.split(" ")[0];
 
-            if (url.equals("/user")) {
-//                handleProductsURL();
-            } else if (url.equals("/todos")) {
-//                handleTodosURL();
-            } else if (url.equals("/index.html")) {
-                var output = new PrintWriter(socket.getOutputStream());
+            File file = new File("web" + File.separator + requestedUrl);
 
-//                DAO dao = new DAO();
-//
-//                List<User> productList = dao.getALL();
-
-                File file = new File("web" + File.separator + url);
-                byte[] page = FileReader.readFromFile(file);
-
-                String contentType = Files.probeContentType(file.toPath());
-
-                output.println("HTTP/1.1 200 OK");
-                output.println("Content-Length:" + page.length);
-                output.println("Content-Type:" + contentType);  //application/json
-                output.println("");
-                //output.print(page);
-                output.flush();
-                var dataOut = new BufferedOutputStream(socket.getOutputStream());
-                dataOut.write(page);
-                dataOut.flush();
-                socket.close();
-            } else if (url.equals("/cat.png")) {
-                var output = new PrintWriter(socket.getOutputStream());
-
-                File file = new File("web" + File.separator + url);
-                byte[] page = FileReader.readFromFile(file);
-
-                String contentType = Files.probeContentType(file.toPath());
-
-                output.println("HTTP/1.1 200 OK");
-                output.println("Content-Length:" + page.length);
-                output.println("Content-Type:" + contentType);  //application/json
-                output.println("");
-                //output.print(page);
-                output.flush();
-                var dataOut = new BufferedOutputStream(socket.getOutputStream());
-                dataOut.write(page);
-                dataOut.flush();
-                socket.close();
+            if (requestType.equals("POST")) {
+                //HÄR SKA VI SKICKA NÅT OM MAN EFTERFRÅGAR VISSA PARAMTERAR. TEX USER BÖRJE OSV
             }
-            else if (url.equals("/stylesheet.css")) {
+
+            if (requestedUrl.equals("/index.html")) {
                 var output = new PrintWriter(socket.getOutputStream());
 
-                File file = new File("web" + File.separator + url);
                 byte[] page = FileReader.readFromFile(file);
 
                 String contentType = Files.probeContentType(file.toPath());
@@ -101,14 +63,17 @@ public class ServerExample {
                 //output.print(page);
                 output.flush();
                 var dataOut = new BufferedOutputStream(socket.getOutputStream());
-                dataOut.write(page);
-                dataOut.flush();
-                socket.close();
-            }
-            else if (url.equals("/javascriptfile.js")) {
+                if (requestType.equals("GET")) {
+                    dataOut.write(page);
+                    dataOut.flush();
+                    socket.close();
+                } else if (requestType.equals("HEAD")) {
+                    dataOut.flush();
+                    socket.close();
+                }
+            } else if (requestedUrl.equals("/cat.png")) {
                 var output = new PrintWriter(socket.getOutputStream());
 
-                File file = new File("web" + File.separator + url);
                 byte[] page = FileReader.readFromFile(file);
 
                 String contentType = Files.probeContentType(file.toPath());
@@ -120,11 +85,59 @@ public class ServerExample {
                 //output.print(page);
                 output.flush();
                 var dataOut = new BufferedOutputStream(socket.getOutputStream());
-                dataOut.write(page);
-                dataOut.flush();
-                socket.close();
-            }
-            else {
+                if (requestType.equals("GET")) {
+                    dataOut.write(page);
+                    dataOut.flush();
+                    socket.close();
+                } else if (requestType.equals("HEAD")) {
+                    dataOut.flush();
+                    socket.close();
+                }
+            } else if (requestedUrl.equals("/stylesheet.css")) {
+                var output = new PrintWriter(socket.getOutputStream());
+
+                byte[] page = FileReader.readFromFile(file);
+
+                String contentType = Files.probeContentType(file.toPath());
+
+                output.println("HTTP/1.1 200 OK");
+                output.println("Content-Length:" + page.length);
+                output.println("Content-Type:" + contentType);  //application/json
+                output.println("");
+                //output.print(page);
+                output.flush();
+                var dataOut = new BufferedOutputStream(socket.getOutputStream());
+                if (requestType.equals("GET")) {
+                    dataOut.write(page);
+                    dataOut.flush();
+                    socket.close();
+                } else if (requestType.equals("HEAD")) {
+                    dataOut.flush();
+                    socket.close();
+                }
+            } else if (requestedUrl.equals("/javascriptfile.js")) {
+                var output = new PrintWriter(socket.getOutputStream());
+
+                byte[] page = FileReader.readFromFile(file);
+
+                String contentType = Files.probeContentType(file.toPath());
+
+                output.println("HTTP/1.1 200 OK");
+                output.println("Content-Length:" + page.length);
+                output.println("Content-Type:" + contentType);  //application/json
+                output.println("");
+                //output.print(page);
+                output.flush();
+                var dataOut = new BufferedOutputStream(socket.getOutputStream());
+                if (requestType.equals("GET")) {
+                    dataOut.write(page);
+                    dataOut.flush();
+                    socket.close();
+                } else if (requestType.equals("HEAD")) {
+                    dataOut.flush();
+                    socket.close();
+                }
+            } else {
                 var output = new PrintWriter(socket.getOutputStream());
 
                 output.println("HTTP/1.1 404");
@@ -139,32 +152,48 @@ public class ServerExample {
             e.printStackTrace();
         }
     }
+
+//    nedanstående metod används ej. probeContent tror jag gör jobbet istället?
+//    private static String contentType(String requestedUrl) {
+////        if (requestedUrl.endsWith(".html")) {
+////            return "text/html";
+////        } else if (requestedUrl.endsWith(".png")) {
+////            return "image/png";
+////        } else if (requestedUrl.endsWith(".pdf")) {
+////            return "application/pdf";
+////        } else if (requestedUrl.endsWith(".js")) {
+////            return "text/javascript";
+////        } else if (requestedUrl.endsWith(".css")) {
+////            return "text/css";
+////        } else return "text/plain";
+////    }
+
 //    private static void handleTodosURL() {
 //
 //
 //    }
 
-    private static String readHeaders(BufferedReader input) throws IOException {
-        String requestedUrl = "";
-        while (true) {
-            String headerLine = input.readLine();
-            if( headerLine.startsWith("GET")){
-                requestedUrl = headerLine.split(" ")[1];
-            }
-            else if(headerLine.startsWith("HEAD")){
-                requestedUrl = headerLine.split(" ")[1];
-            }
-            else if(headerLine.startsWith("POST")){
-                requestedUrl = headerLine.split(" ")[1];
-            }
-            //kod som gör man kan sätta in sökparametrar. typ user?=börje osv.
-
-            System.out.println(headerLine);
-            if (headerLine.isEmpty())
-                break;
-        }
-        return requestedUrl;
-    }
+//    private static String readHeaders(BufferedReader input) throws IOException {
+//        String requestedUrl = "";
+//        while (true) {
+//            String headerLine = input.readLine();
+//            if( headerLine.startsWith("GET")){
+//                requestedUrl = headerLine.split(" ")[1];
+//            }
+//            else if(headerLine.startsWith("HEAD")){
+//                requestedUrl = headerLine.split(" ")[1];
+//            }
+//            else if(headerLine.startsWith("POST")){
+//                requestedUrl = headerLine.split(" ")[1];
+//            }
+//            //kod som gör man kan sätta in sökparametrar. typ user?=börje osv.
+//
+//            System.out.println(headerLine);
+//            if (headerLine.isEmpty())
+//                break;
+//        }
+//        return requestedUrl;
+//    }
 
     private static void createJsonResponse() {
         var todos = new Todos();
@@ -177,9 +206,10 @@ public class ServerExample {
         var json = converter.convertToJson(todos);
         System.out.println(json);
     }
-
-    private static String handleProductsURL(){
-        return "";
-    }
 }
+
+//    private static String handleProductsURL(){
+//        return "";
+//    }
+//}
 

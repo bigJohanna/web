@@ -35,34 +35,41 @@ public class ServerExample {
     }
 
     private static void handleConnection(Socket socket) {
-        System.out.println(Thread.currentThread());
+        System.out.println("Current thread running: "+Thread.currentThread());
+
+        //Work that we want the threads to do:
+        BufferedReader input = null;
+
         try {
-            BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            //We read characters from the client(insomnia) via input stream in the socket
+            input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
 
             String url = input.readLine();
             String requestedUrl = url.split(" ")[1];
             String requestType = url.split(" ")[0];
 
-            File file = new File("web" + File.separator + requestedUrl);
-
+            File file = new File("core/web" + File.separator + requestedUrl);
+            byte[] page;
             if (requestType.equals("POST")) {
-                //HÄR SKA VI SKICKA NÅT OM MAN EFTERFRÅGAR VISSA PARAMTERAR. TEX USER BÖRJE OSV
-            }
+                System.out.println("POST-request identified :)");            }
 
             if (requestedUrl.equals("/index.html")) {
+                //we get character output stream to client (for headers)
                 var output = new PrintWriter(socket.getOutputStream());
 
-                byte[] page = FileReader.readFromFile(file);
+                page = FileReader.readFromFile(file);
 
                 String contentType = Files.probeContentType(file.toPath());
 
                 output.println("HTTP/1.1 200 OK");
-                output.println("Content-Length:" + page.length);
-                output.println("Content-Type:" + contentType);  //application/json
+                output.println("Content-Length: " + page.length);
+                output.println("Content-Type: " + contentType);  //application/json
                 output.println("");
                 //output.print(page);
                 output.flush();
                 var dataOut = new BufferedOutputStream(socket.getOutputStream());
+
                 if (requestType.equals("GET")) {
                     dataOut.write(page);
                     dataOut.flush();
@@ -74,7 +81,7 @@ public class ServerExample {
             } else if (requestedUrl.equals("/cat.png")) {
                 var output = new PrintWriter(socket.getOutputStream());
 
-                byte[] page = FileReader.readFromFile(file);
+                page = FileReader.readFromFile(file);
 
                 String contentType = Files.probeContentType(file.toPath());
 
@@ -96,7 +103,7 @@ public class ServerExample {
             } else if (requestedUrl.equals("/stylesheet.css")) {
                 var output = new PrintWriter(socket.getOutputStream());
 
-                byte[] page = FileReader.readFromFile(file);
+                page = FileReader.readFromFile(file);
 
                 String contentType = Files.probeContentType(file.toPath());
 
@@ -118,7 +125,7 @@ public class ServerExample {
             } else if (requestedUrl.equals("/javascriptfile.js")) {
                 var output = new PrintWriter(socket.getOutputStream());
 
-                byte[] page = FileReader.readFromFile(file);
+                page = FileReader.readFromFile(file);
 
                 String contentType = Files.probeContentType(file.toPath());
 
